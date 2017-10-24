@@ -21,7 +21,7 @@ Commands['leave-voice'] = {
   noDM: true,
   level: 1,
   fn: function (msg, suffix, bot) {
-    v.leave(msg, suffix, bot)
+    v.leave(msg, bot)
   }
 }
 
@@ -37,15 +37,23 @@ Commands.volume = {
   }
 }
 
-Commands.music = {
-  name: 'music',
-  help: 'I\'ll pause or play the music, just tell me what after the command!',
-  aliases: ['pauseplay', 'playpause'],
+Commands.pause = {
+  name: 'pause',
+  help: 'I\'ll pause the music, may be temporary!',
   noDM: true,
   level: 1,
   fn: function (msg, suffix, bot) {
-    // TODO: Change this for two commands, resume and pause.
-    v.music(msg, suffix, bot)
+    v.pause(msg, bot)
+  }
+}
+
+Commands.resume = {
+  name: 'resume',
+  help: 'I\'ll resume the music.',
+  noDM: true,
+  level: 1,
+  fn: function (msg, suffix, bot) {
+    v.resume(msg, bot)
   }
 }
 
@@ -65,7 +73,6 @@ Commands.voteskip = {
   noDM: true,
   level: 1,
   fn: function (msg, suffix, bot) {
-    // TODO: Logic and add it in, good logic too please.
     v.voteSkip(msg, bot)
   }
 }
@@ -76,7 +83,6 @@ Commands.shuffle = {
   noDM: true,
   level: 2,
   fn: function (msg, suffix, bot) {
-    // TODO: The logic for this is in WildBeats.
     v.shuffle(msg, bot)
   }
 }
@@ -118,10 +124,11 @@ Commands.playlist = {
         v.fetchList(msg).then((r) => {
           var arr = []
           let user = msg.channel.guild.members.get(r.requester[0]) !== null ? msg.channel.guild.members.get(r.requester[0]).nick !== null ? msg.channel.guild.members.get(r.requester[0]).nick : msg.channel.guild.members.get(r.requester[0]).user.username : r.requester[0]
-          arr.push('Now playing: **' + r.title[0] + '** Requested by ' + user + '\n')
+          arr.push(`Now playing: **${r.title[0]}** [${v.hhMMss(r.length[0] / 1000)}] requested by ${user}`)
           for (var i = 1; i < r.title.length; i++) {
             let user = msg.channel.guild.members.get(r.requester[i]) !== null ? msg.channel.guild.members.get(r.requester[i]).nick !== null ? msg.channel.guild.members.get(r.requester[i]).nick : msg.channel.guild.members.get(r.requester[i]).user.username : r.requester[i]
             arr.push((i) + '. **' + r.title[i] + '** Requested by ' + user)
+            arr.push(`${i}. **${r.title[i]}** [${v.hhMMss(r.length[i] / 1000)}] requested by ${user}`)
             if (i === 9) {
               if (r.title.length - 10 !== 0) arr.push('And about ' + (r.title.length - 10) + ' more songs.')
               break
@@ -144,6 +151,7 @@ Commands.playlist = {
 
 Commands.time = {
   name: 'time',
+  aliases: ['timeleft', 'nowplaying', 'np'],
   help: 'get the current time / time left of the current track',
   noDM: true,
   timeout: 10,

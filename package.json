@@ -46,7 +46,6 @@
     "require-directory": "^2.1.1",
     "rethinkdbdash": "^2.3.31",
     "semver": "^5.4.1",
-    "snyk": "^1.44.1",
     "superagent": "^3.7.0",
     "tagscript": "github:guscaplan/tagscript",
     "winston": "^2.4.0",
@@ -54,13 +53,10 @@
     "winston-elasticsearch": "^0.5.3",
     "ws": "^3.2.0",
     "xml2js": "^0.4.19",
-    "youtube-api": "^2.0.9",
-    "youtube-dl": "^1.12.2",
-    "ytdl-core": "^0.17.0"
+    "youtube-api": "^2.0.9"
   },
   "devDependencies": {
     "eslint": "^4.8.0",
     "standard": "^8.1.0"
-  },
-  "snyk": true
+  }
 }

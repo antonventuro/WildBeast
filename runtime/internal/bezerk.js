@@ -1,15 +1,13 @@
 var Config = require('../../config.json')
-var Websocket = require('ws')
 var Bezerk
-var Logger = require('./logger.js').Logger
-
 var bot // eslint-disable-line
-
 if (Config.bezerk.use === true) {
   init()
 }
 
 function init () {
+  var Websocket = require('ws')
+  var Logger = require('./logger.js').Logger
   Bezerk = new Websocket(Config.bezerk.uri)
   var argv = require('minimist')(process.argv.slice(2))
   Bezerk.on('close', () => {
