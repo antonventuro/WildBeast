@@ -67,7 +67,7 @@ exports.helpHandle = function (msg, suffix) {
       'Like what we do? Consider supporting my developer at Patreon! <https://www.patreon.com/Dougley>'
     ]
     msg.author.getDMChannel().then((y) => {
-      if (!msg.channel.guild) {
+      if (msg.channel.guild) {
         msg.channel.createMessage('Help is underway ' + msg.author.mention + '!')
       }
       for (var r in sorts) {

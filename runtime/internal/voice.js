@@ -18,7 +18,6 @@ let reactions = {
 // TODO: Something to track how many voice connections are active, Bezerk?
 
 exports.join = function (msg, suffix, bot) {
-  // TODO: Make a function that creates the join message so we don't have a hundred line export.
   let chan = bot.voiceConnections.find(vc => vc.guildId === msg.channel.guild.id)
   if (!chan) {
     if (msg.channel.guild.channels.filter(c => c.type === 2).length === 0) {
@@ -29,7 +28,7 @@ exports.join = function (msg, suffix, bot) {
         msg.channel.createMessage(`${msg.author.mention}, join a voice channel before using this command again.`)
       } else {
         customize.getGuildData(msg.channel.guild).then(g => {
-          let prefix = g.customize.prefix !== null ? g.customize.prefix.replace(prefixRegex, '\$1') : config.settings.prefix.replace(prefixRegex, '\$1')
+          let prefix = g.customize.prefix !== null ? g.customize.prefix.replace(prefixRegex, '$1') : config.settings.prefix.replace(prefixRegex, '$1')
           if (suffix) {
             if (url.parse(suffix).host === null) {
               resolveTracks(config.musicNodes[0], `ytsearch:${encodeURI(suffix)}`).then(tracks => {
@@ -179,7 +178,7 @@ exports.skip = function (msg, bot) {
       info[msg.channel.guild.id].requester.shift()
       info[msg.channel.guild.id].skips = {count: 0, users: []}
       getPlayer(bot, info[msg.channel.guild.id].channel).then(player => {
-        player.stop()
+        // player.stop()
         player.play(info[msg.channel.guild.id].track[0])
       })
       msg.channel.createMessage(`Now playing ${info[msg.channel.guild.id].title[0]} [${hhMMss(info[msg.channel.guild.id].length[0] / 1000)}] requested by ${msg.channel.guild.members.get(info[msg.channel.guild.id].requester[0]) !== null ? msg.channel.guild.members.get(info[msg.channel.guild.id].requester[0]).nick !== null ? msg.channel.guild.members.get(info[msg.channel.guild.id].requester[0]).nick : msg.channel.guild.members.get(info[msg.channel.guild.id].requester[0]).user.username : info[msg.channel.guild.id].requester[0]}`)
@@ -214,12 +213,12 @@ exports.fetchList = function (msg, bot) {
   } else {
     let arr = []
     let user = msg.channel.guild.members.get(info[msg.channel.guild.id].requester[0]) !== null ? msg.channel.guild.members.get(info[msg.channel.guild.id].requester[0]).nick !== null ? msg.channel.guild.members.get(info[msg.channel.guild.id].requester[0]).nick : msg.channel.guild.members.get(info[msg.channel.guild.id].requester[0]).user.username : info[msg.channel.guild.id].requester[0]
-    arr.push(`Now playing: **${info[msg.channel.guild.id].title[0]}** [${hhMMss(r.length[0] / 1000)}] requested by ${user}`)
-    for (let i = 1; i < r.title.length; i++) {
+    arr.push(`Now playing: **${info[msg.channel.guild.id].title[0]}** [${hhMMss(info[msg.channel.guild.id].length[0] / 1000)}] requested by ${user}`)
+    for (let i = 1; i < info[msg.channel.guild.id].title.length; i++) {
       let user = msg.channel.guild.members.get(info[msg.channel.guild.id].requester[i]) !== null ? msg.channel.guild.members.get(info[msg.channel.guild.id].requester[i]).nick !== null ? msg.channel.guild.members.get(info[msg.channel.guild.id].requester[i]).nick : msg.channel.guild.members.get(info[msg.channel.guild.id].requester[i]).user.username : info[msg.channel.guild.id].requester[i]
       arr.push(`${i}. **${info[msg.channel.guild.id].title[i]}** [${hhMMss(info[msg.channel.guild.id].length[i] / 1000)}] requested by ${user}`)
-      if (i === 9) {
-        if (info[msg.channel.guild.id].title.length - 10 !== 0) arr.push('And about ' + (info[msg.channel.guild.id].title.length - 10) + ' more songs.')
+      if (i === 10) {
+        if (info[msg.channel.guild.id].title.length - 11 !== 0) arr.push('And about ' + (info[msg.channel.guild.id].title.length - 11) + ' more songs.')
         break
       }
     }
@@ -231,14 +230,40 @@ exports.fetchList = function (msg, bot) {
   }
 }
 
-exports.manageList = function (msg, bot) {
+exports.manageList = function (msg, suffix, bot) {
   let chan = bot.voiceConnections.find(vc => vc.guildId === msg.channel.guild.id)
   if (!chan) {
     msg.channel.createMessage(`${msg.author.mention} I am not streaming in this guild.`)
   } else if (info[msg.channel.guild.id].track.length === 0) {
     msg.channel.createMessage('It appears that there aren\'t any songs in the current queue.')
-  } else {
-    msg.channel.createMessage(`WIP!`)
+  } else if (suffix[0] === 'clear') {
+    info[msg.channel.guild.id].track.splice(1)
+    info[msg.channel.guild.id].title.splice(1)
+    info[msg.channel.guild.id].length.splice(1)
+    info[msg.channel.guild.id].requester.splice(1)
+    msg.channel.createMessage(`${msg.author.mention} the queue has been cleared.`)
+  } else if (suffix[0] === 'remove') {
+    suffix.shift()
+    if (suffix.some(element => {element !== '-' || isNaN(element)})) {
+      msg.channel.createMessage(`${msg.author.mention} try a number like \`1\` or \`1-3\` or a space separated list such as \`1 3 5\``)
+    } else if (suffix[0].includes('-')) {
+      let args = suffix[0].split('-')
+      if (args[0] < 1 || args[1] > info[msg.channel.guild.id].track.length) {
+        msg.channel.createMessage(`properly worded error kthx`)
+      } else {
+        msg.channel.createMessage(`${msg.author.mention} tracks ${args[0]} to ${args[1]} have been removed from the queue.`)
+        info[msg.channel.guild.id].track.splice(args[0], args[1])
+        info[msg.channel.guild.id].title.splice(args[0], args[1])
+        info[msg.channel.guild.id].length.splice(args[0], args[1])
+        info[msg.channel.guild.id].requester.splice(args[0], args[1])
+      }
+    } else {
+      let tracks = []
+      let sorted = suffix.sort(function (a, b) {
+        return b - a
+      })
+      manageLoop(msg, sorted, tracks)
+    }
   }
 }
 
@@ -271,37 +296,6 @@ exports.shuffle = function (msg, bot) {
       }
     }
     msg.channel.createMessage(`${msg.author.mention} the playlist has been shuffled.`)
-  }
-}
-
-exports.plreq = function (msg, suffix, bot) {
-  var link = url.parse(suffix)
-  var query = require('querystring').parse(link)
-  console.log(query)
-  resolveTracks(config.musicNodes[0], suffix).then(tracks => {
-    console.log(tracks)
-  })
-}
-
-exports.testreq = function (msg, suffix, bot) {
-  if (url.parse(suffix).host === null) {
-    resolveTracks(config.musicNodes[0], `ytsearch:${suffix}`).then(tracks => {
-      if (tracks.length === 0) {
-        msg.channel.createMessage('no tracks lul')
-      } else {
-        let titles = tracks.splice(0, 5).map(t => `${t.info.title.indexOf}: ${t.info.title}`)
-        msg.channel.createMessage(titles)
-      }
-    })
-  } else {
-    resolveTracks(config.musicNodes[0], suffix).then(tracks => {
-      if (tracks.length === 0) {
-        msg.channel.createMessage('no tracks lul')
-      } else {
-        let titles = tracks.splice(0, 5).map(t => `${t.info.title.indexOf}: ${t.info.title}`)
-        msg.channel.createMessage(titles)
-      }
-    })
   }
 }
 
@@ -365,28 +359,28 @@ function play (msg, bot) {
   getPlayer(bot, info[msg.channel.guild.id].channel).then(player => {
     player.play(info[msg.channel.guild.id].track[0])
 
-    player.once('disconnect', (err) => {
+    player.on('disconnect', (err) => {
       if (err) {
         console.error(err)
       }
       // do something
     })
 
-    player.once('error', err => {
+    player.on('error', err => {
       if (err) {
         console.error(err)
       }
       // log error and handle it
     })
 
-    player.once('stuck', msg => {
+    player.on('stuck', msg => {
       if (msg) {
         console.error(msg)
       }
       // track stuck event
     })
 
-    player.once('end', data => {
+    player.on('end', data => {
       if (data.reason && data.reason === 'REPLACED' || data.reason && data.reason === 'STOPPED') {
         console.log(`track ended with reason ${data.reason}`)
         return
@@ -419,8 +413,6 @@ function play (msg, bot) {
     })
   })
 }
-
-exports.getPlayer = getPlayer
 
 function makeJoinMessage (prefix, channel) {
   let resp = ''
@@ -478,7 +470,7 @@ function addTracks (msg, bot, tracks) {
 }
 
 function react (msg, bot, tracks) {
-  //TODO: add timeout for event cause event emitter leaks lul!!
+  // TODO: add timeout for event cause event emitter leaks lul!!
   let titles = tracks.slice(0, 5).map((t, index) => {
     return {name: `**${index + 1}**`, value: `\`\`\`${t.info.title} [${hhMMss(t.info.length / 1000)}]\`\`\``}
   })
@@ -489,7 +481,7 @@ function react (msg, bot, tracks) {
         title: 'YouTube search.',
         description: 'Top five tracks for your keywords.',
         color: 9388238,
-        timestamp: new Date,
+        timestamp: new Date(),
         fields: titles
       }
     }).then(ms => {
@@ -526,7 +518,7 @@ function react (msg, bot, tracks) {
         title: 'YouTube search.',
         description: 'Top five tracks for your keywords.',
         color: 9388238,
-        timestamp: new Date,
+        timestamp: new Date(),
         fields: titles
       }
     }).then(ms => {
@@ -605,10 +597,11 @@ exports.hhMMss = hhMMss
 function progressBar (percent) {
   let str = ''
   for (let i = 0; i < 9; i++) {
-    if (i === percent)
+    if (i === percent) {
       str += '\uD83D\uDD18'
-    else
+    } else {
       str += '▬'
+    }
   }
   return str
 }
@@ -634,5 +627,19 @@ function safeLoop (msg, bot, tracks) {
       tracks.shift()
       safeLoop(msg, bot, tracks)
     }
+  }
+}
+
+function manageLoop (msg, sorted, tracks) {
+  if (sorted.length === 0) {
+    msg.channel.createMessage(`The following tracks have been removed from the queue:\n${tracks.join('\n')}`)
+  } else {
+    tracks.push(info[msg.channel.guild.id].title[sorted[0]])
+    info[msg.channel.guild.id].track.splice(sorted[0], 1)
+    info[msg.channel.guild.id].title.splice(sorted[0], 1)
+    info[msg.channel.guild.id].length.splice(sorted[0], 1)
+    info[msg.channel.guild.id].requester.splice(sorted[0], 1)
+    sorted.shift()
+    manageLoop(msg, sorted, tracks)
   }
 }

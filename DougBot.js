@@ -24,10 +24,11 @@ const {PlayerManager} = require('eris-lavalink')
 
 Logger.info('Initializing...')
 
-if (argv.shardmode && !isNaN(argv.firstShard) && !isNaN(argv.lastShard)) {
+if (argv.shardmode && !isNaN(argv.maxShards) &&!isNaN(argv.firstShard) && !isNaN(argv.lastShard)) {
   Logger.info('Starting in ShardMode')
   bot = new Eris(Config.bot.token, {
     getAllUsers: true,
+    maxShards: argv.maxShards,
     firstShardID: argv.firstShard,
     lastShardID: argv.lastShard,
     restMode: true
@@ -110,7 +111,7 @@ bot.on('messageCreate', msg => {
       suffix = suffix.slice(2, suffix.length).join(' ')
     }
     if (cmd === 'help') {
-      runtime.commandcontrol.helpHandle(bot, msg, suffix)
+      runtime.commandcontrol.helpHandle(msg, suffix, bot)
     }
     if (aliases[cmd]) {
       cmd = aliases[cmd].name
@@ -264,7 +265,6 @@ bot.on('messageCreate', msg => {
         authorID: msg.author.id,
         guild: loggingGuild,
         botID: bot.user.id,
-        cmd: cmd,
         shard: guild.shard.id,
         error: e
       })

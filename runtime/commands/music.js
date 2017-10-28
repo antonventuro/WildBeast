@@ -90,16 +90,15 @@ Commands.shuffle = {
 
 Commands.playlist = {
   name: 'playlist',
-  help: 'Use delete and a song number to remove it from the list else I will fetch you the playlist I\'m currently playing!',
-  usage: '<clear/delete/remove> <number>',
+  help: 'Use remove and a song number to remove it from the list, clear to empty the queue else I will fetch you the queue I\'m currently playing!',
+  usage: '<nothing> or <remove number> or <clear>',
   aliases: ['list'],
   noDM: true,
   timeout: 5,
   level: 0,
   fn: function (msg, suffix, bot) {
     suffix = suffix.toLowerCase().split(' ')
-    // TODO: Add a way to manage the playlist, better than the last stuff?
-    if (suffix[0] !== undefined && ['clear', 'delete', 'remove'].indexOf(suffix[0]) > -1) {
+    if (['clear', 'remove'].includes(suffix[0])) {
       checkLevel(msg, msg.author.id, msg.member.roles).then(x => {
         if (x >= 1) {
           v.manageList(msg, suffix, bot)
@@ -147,32 +146,6 @@ Commands.request = {
   level: 1,
   fn: function (msg, suffix, bot) {
     v.request(msg, suffix, bot)
-  }
-}
-
-Commands.plreq = {
-  name: 'plreq',
-  help: 'none',
-  noDM: true,
-  usage: 'link',
-  timeout: 10,
-  level: 1,
-  fn: function (msg, suffix, bot) {
-    // TODO: Remove test command.
-    v.plreq(msg, suffix, bot)
-  }
-}
-
-Commands.testreq = {
-  name: 'testreq',
-  help: 'none',
-  noDM: true,
-  usage: 'link',
-  timeout: 10,
-  level: 1,
-  fn: function (msg, suffix, bot) {
-    // TODO: Remove test command.
-    v.testreq(msg, suffix, bot)
   }
 }
 
