@@ -20,7 +20,7 @@ Commands['leave-voice'] = {
   aliases: ['stop'],
   help: 'I\'ll leave the current voice channel.',
   noDM: true,
-  level: 2,
+  level: 1,
   fn: function (msg, suffix, bot) {
     v.leave(msg, bot)
   }
@@ -32,7 +32,7 @@ Commands.volume = {
   usage: '<nothing/number>',
   aliases: ['vol'],
   noDM: true,
-  level: 2,
+  level: 1,
   fn: function (msg, suffix, bot) {
     v.volume(msg, suffix, bot)
   }
@@ -42,7 +42,7 @@ Commands.pause = {
   name: 'pause',
   help: 'I\'ll pause the music, may be temporary!',
   noDM: true,
-  level: 2,
+  level: 1,
   fn: function (msg, suffix, bot) {
     v.pause(msg, bot)
   }
@@ -52,7 +52,7 @@ Commands.resume = {
   name: 'resume',
   help: 'I\'ll resume the music.',
   noDM: true,
-  level: 2,
+  level: 1,
   fn: function (msg, suffix, bot) {
     v.resume(msg, bot)
   }
@@ -72,7 +72,7 @@ Commands.voteskip = {
   name: 'voteskip',
   help: 'Vote to skip the current playing song.',
   noDM: true,
-  level: 1,
+  level: 0,
   fn: function (msg, suffix, bot) {
     v.voteSkip(msg, bot)
   }
@@ -118,7 +118,7 @@ Commands.time = {
   help: 'get the current time / time left of the current track',
   noDM: true,
   timeout: 10,
-  level: 1,
+  level: 0,
   fn: function (msg, suffix, bot) {
     v.time(msg, bot)
   }

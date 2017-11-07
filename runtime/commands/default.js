@@ -114,7 +114,7 @@ Commands.eval = {
     try {
       var returned = eval(suffix) // eslint-disable-line no-eval
       var str = util.inspect(returned, {
-        depth: 1
+        depth: 2
       })
       if (str.length > 1900) {
         str = str.substr(0, 1897)
@@ -125,7 +125,7 @@ Commands.eval = {
         if (returned !== undefined && returned !== null && typeof returned.then === 'function') {
           returned.then(() => {
             var str = util.inspect(returned, {
-              depth: 1
+              depth: 2
             })
             if (str.length > 1900) {
               str = str.substr(0, 1897)
@@ -134,7 +134,7 @@ Commands.eval = {
             ms.edit('```xl\n' + str + '\n```')
           }, (e) => {
             var str = util.inspect(e, {
-              depth: 1
+              depth: 2
             })
             if (str.length > 1900) {
               str = str.substr(0, 1897)

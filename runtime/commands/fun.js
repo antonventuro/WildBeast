@@ -1,10 +1,8 @@
 var Commands = []
 var Logger = require('../internal/logger.js').Logger
 var Giphy = require('../giphy.js')
-var Cleverbot = require('cleverbot.io')
 var config = require('../../config.json')
 var request = require('superagent')
-var cleverbot = new Cleverbot(config.api_keys.cleverbot_user, config.api_keys.cleverbot_key)
 
 Commands.gif = {
   name: 'gif',
@@ -53,26 +51,6 @@ Commands.rip = {
       resolve[0] = suffix
     }
     msg.channel.createMessage('http://ripme.xyz/' + qs.stringify(resolve).substr(2))
-  }
-}
-
-Commands.fortunecow = {
-  name: 'fortunecow',
-  help: 'I\'ll get a random fortunecow!',
-  timeout: 20,
-  level: 0,
-  fn: function (msg) {
-    request.get('https://fortunecow.dougley.com/random')
-      .end((err, result) => {
-        if (!err && result.status === 200) {
-          msg.channel.createMessage(`<@${msg.author.id}>,` + '```' + result.text + '```')
-        } else if (result.status === 429) {
-          msg.channel.createMessage('Too many requests, please try again later.')
-        } else {
-          msg.channel.createMessage('Something went wrong, please try again later.')
-          Logger.warn(err)
-        }
-      })
   }
 }
 
@@ -377,24 +355,6 @@ Commands.fancyinsult = {
           Logger.error(`Got an error: ${err}, status code: ${res.status}`)
         }
       })
-  }
-}
-
-Commands.cleverbot = {
-  name: 'cleverbot',
-  help: 'Talk to cleverbot!',
-  aliases: ['chat', 'cb', 'talk'],
-  level: 0,
-  fn: function (msg, suffix) {
-    cleverbot.create(function (err, session) {
-      if (err) Logger.error(err)
-      cleverbot.setNick('wildbeast')
-      msg.channel.sendTyping()
-      cleverbot.ask(suffix, function (e, r) {
-        if (e) Logger.error(e)
-        msg.channel.createMessage(r)
-      })
-    })
   }
 }
 

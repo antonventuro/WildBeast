@@ -77,7 +77,7 @@ exports.reply = function (msg, what) {
   })
 }
 
-exports.helpHandle = function (bot, msg) {
+exports.helpHandle = function (msg) {
   // You will just have to deal with the fact that this is static
   var arr = []
   arr.push('`customize` enables you to adjust various settings about my behaviour in your server.')
@@ -109,7 +109,7 @@ exports.helpHandle = function (bot, msg) {
     y.createMessage(arr.join('\n'))
   }).catch((e) => {
     Logger.error(e)
-    bot.createMessage(msg.channel.id, 'Whoops, try again.')
+    msg.channel.createMessage('Whoops, try again.')
   })
 }
 
