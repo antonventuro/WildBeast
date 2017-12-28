@@ -113,8 +113,8 @@ bot.on('messageCreate', msg => {
     if (cmd === 'help') {
       runtime.commandcontrol.helpHandle(msg, suffix, bot)
     }
-    if (aliases[cmd]) {
-      cmd = aliases[cmd].name
+    if (aliases.has(cmd)) {
+      cmd = aliases.get(cmd)
     }
     if (commands[cmd]) {
       if (typeof commands[cmd] !== 'object') {
@@ -260,7 +260,7 @@ bot.on('messageCreate', msg => {
       Logger.warn('RethinkDB server is not running or I could not connect, process will now exit.')
       process.exit(1)
     } else {
-      Logger.error('Prefix error: ' + e, {
+      Logger.error('Prefix error: ' + e.stack, {
         author: msg.author.username,
         authorID: msg.author.id,
         guild: loggingGuild,

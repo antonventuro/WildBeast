@@ -178,7 +178,7 @@ Commands.globalban = {
   usage: '<ban/unban/status> <userid>',
   level: 'master',
   fn: function (msg, suffix) {
-    var users = require('../databases/controllers/users.js')
+    var users = require('../databases/users.js')
     var what = suffix.toLowerCase().split(' ')[0]
     var who = suffix.split(' ')[1] !== undefined ? suffix.split(' ')[1] : what
     var reason = suffix.substr(what.length + who.length + 1)
@@ -234,7 +234,7 @@ Commands.customize = {
   noDM: true,
   level: 3,
   fn: function (msg, suffix) {
-    var c = require('../databases/controllers/customize.js')
+    var c = require('../databases/customize.js')
     suffix = suffix.split(' ')
     var x = suffix.slice(1, suffix.length).join(' ')
     if (suffix[0].length === 0) {
@@ -319,7 +319,7 @@ Commands.namechanges = {
   noDM: true,
   level: 0,
   fn: function (msg) {
-    const n = require('../databases/controllers/users.js')
+    const n = require('../databases/users.js')
     if (msg.mentions.length === 0) {
       msg.channel.createMessage('Please mention the user you want the name changes of.')
       return
@@ -338,7 +338,7 @@ Commands.setlevel = {
   noDM: true,
   level: 3,
   fn: function (msg, suffix, bot) {
-    var Permissions = require('../databases/controllers/permissions.js')
+    var Permissions = require('../databases/permissions.js')
     suffix = suffix.split(' ')
     if (isNaN(suffix[0])) {
       msg.channel.createMessage(`<@${msg.author.id}>, Your first parameter is not a number!`)
@@ -435,7 +435,7 @@ Commands.rankup = {
   timeout: 5,
   level: 3,
   fn: function (msg, suffix, bot) {
-    var Permissions = require('../databases/controllers/permissions.js')
+    var Permissions = require('../databases/permissions.js')
     if (msg.mentions.length > 0) {
       Permissions.checkLevel(msg, msg.author.id, msg.member.roles).then((authorLevel) => {
         let list = {success: [], error: {level2: [], level3: []}}
@@ -600,7 +600,7 @@ Commands.userinfo = {
   noDM: true,
   level: 0,
   fn: function (msg, suffix, bot) {
-    var Permissions = require('../databases/controllers/permissions.js')
+    var Permissions = require('../databases/permissions.js')
     if (msg.mentions.length === 0) {
       Permissions.checkLevel(msg, msg.author.id, msg.member.roles).then((level) => {
         var tempRoles = msg.member.roles.map(r => msg.channel.guild.roles.get(r)).sort(function (a, b) {

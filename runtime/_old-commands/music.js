@@ -1,6 +1,6 @@
 'use strict'
 var v = require('../internal/voice.js')
-var checkLevel = require('../databases/controllers/permissions.js').checkLevel
+var checkLevel = require('../databases/permissions.js').checkLevel
 var Commands = []
 
 Commands.voice = {

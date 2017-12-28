@@ -1,5 +1,5 @@
 'use strict'
-var Config = require('../../../config.json')
+var Config = require('../../config.json')
 var Dash = require('rethinkdbdash')
 var r = new Dash({
   user: Config.database.user,
@@ -10,7 +10,7 @@ var r = new Dash({
     port: Config.database.port
   }]
 })
-var Logger = require('../../internal/logger.js').Logger
+var Logger = require('../internal/logger.js').Logger
 var bugsnag = require('bugsnag')
 bugsnag.register(Config.api_keys.bugsnag)
 

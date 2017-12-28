@@ -1,5 +1,5 @@
 'use strict'
-var Config = require('../../../config.json')
+var Config = require('../../config.json')
 var Dash = require('rethinkdbdash')
 var r = new Dash({
   user: Config.database.user,

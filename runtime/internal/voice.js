@@ -3,7 +3,7 @@ let config = require('../../config.json')
 let info = {}
 let superagent = require('superagent')
 let url = require('url')
-let customize = require('../databases/controllers/customize.js')
+let customize = require('../databases/customize.js')
 let prefixRegex = /([~*_])/g
 let reactions = {
   '1⃣': 0,
